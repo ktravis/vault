@@ -213,15 +213,15 @@ class PixelArt {
     return this;
   }
 
-  public function text(x: Float, y: Float, text: String, ?size: Int = 1): PixelArt {
+  public function text(x: Float, y: Float, text: String, ?centered: Bool = true, ?size: Int = 1): PixelArt {
     if (disabled) return this;
     x += 0.5;
     y += 0.5;
     var bmpd = Text.drawText(text, 0xFF000000 | _color, size);
     var m = new Matrix();
-    m.translate((x*px - bmpd.width/2), (y*px - bmpd.height/2));
+    m.translate((x*px - (centered ? bmpd.width/2 : 0)), (y*px - (centered ? bmpd.height/2 : 0)));
     sprite.graphics.beginBitmapFill(bmpd, m, false, false);
-    sprite.graphics.drawRect(x*px - bmpd.width/2, y*px - bmpd.height/2, bmpd.width, bmpd.height);
+    sprite.graphics.drawRect(x*px - (centered ? bmpd.width/2 : 0), y*px - (centered ? bmpd.height/2 : 0), bmpd.width, bmpd.height);
     return this;
   }
 }
