@@ -14,6 +14,15 @@ abstract Point(Point_) from Point_ to Point_ {
     this = {x: x, y: y};
   }
 
+  @:op(A + B) static public function add(lhs:Point, rhs:Point):Point
+  {
+    return new Point(lhs.x+rhs.x,lhs.y+rhs.y);
+  }
+  @:op(A == B) static public function equals(lhs:Point, rhs:Point):Bool
+  {
+    return lhs.x == rhs.x && lhs.y == rhs.y;
+  }
+
   public var x(get,set):Int;
   inline function get_x() return this.x;
   inline function set_x(x:Int) return this.x = x;
