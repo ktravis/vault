@@ -23,6 +23,11 @@ abstract Point(Point_) from Point_ to Point_ {
     return lhs.x == rhs.x && lhs.y == rhs.y;
   }
 
+  public function toString() 
+  {
+    return 'Point($x,$y)';
+  }
+
   public var x(get,set):Int;
   inline function get_x() return this.x;
   inline function set_x(x:Int) return this.x = x;

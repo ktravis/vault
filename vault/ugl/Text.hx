@@ -119,10 +119,19 @@ class Text extends Entity {
   static public function drawText(text: String, color: Int, size: Int): BitmapData {
     color |= 0xFF000000;
     var lines = 1;
+    var longest_line = 0;
+    var line_start = 0;
     for (i in 0...text.length)
-        if (text.charAt(i) == '\n')
-            lines++;
-    var bmpd = new BitmapData(size*text.length*FONTWIDTH, size*FONTHEIGHT*lines, true, 0);
+      if (text.charAt(i) == '\n')
+      {
+        lines++;
+        longest_line = EMath.max(i - line_start, longest_line);
+        line_start = i;
+      }
+    longest_line = EMath.max(text.length - line_start, longest_line);
+    trace('lines: $lines and longest_line: $longest_line');
+    trace(text);
+    var bmpd = new BitmapData(size*longest_line*FONTWIDTH, size*FONTHEIGHT*lines, true, 0);
 
     var curx = 0;
     var maxx = 0;
@@ -148,7 +157,7 @@ class Text extends Entity {
       curx = maxx + 2*size;
     }
 
-    var out = new BitmapData(curx, bmpd.height, true, 0);
+    var out = new BitmapData(bmpd.width, bmpd.height, true, 0);
     out.copyPixels(bmpd, out.rect, new flash.geom.Point(0, 0));
     return out;
   }
