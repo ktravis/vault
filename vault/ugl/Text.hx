@@ -118,11 +118,22 @@ class Text extends Entity {
 
   static public function drawText(text: String, color: Int, size: Int): BitmapData {
     color |= 0xFF000000;
-    var bmpd = new BitmapData(size*text.length*FONTWIDTH, size*FONTHEIGHT, true, 0);
+    var lines = 1;
+    for (i in 0...text.length)
+        if (text.charAt(i) == '\n')
+            lines++;
+    var bmpd = new BitmapData(size*text.length*FONTWIDTH, size*FONTHEIGHT*lines, true, 0);
 
     var curx = 0;
     var maxx = 0;
+    var yoff = 0;
     for (i in 0...text.length) {
+      if (text.charAt(i) == '\n') 
+      {
+        yoff += FONTHEIGHT;
+        maxx = curx = 0;
+        continue;
+      }
       var c = text.charCodeAt(i);
       if (c <= 32 || c > 126) { c = 32; maxx += FONTWIDTH*size; }
       for (p in 0...FONTWIDTH*FONTHEIGHT) {
@@ -131,7 +142,7 @@ class Text extends Entity {
           var px = curx + (p%FONTWIDTH) * size;
           maxx = EMath.max(maxx, px);
           var py = Std.int(p/FONTWIDTH) * size;
-          bmpd.fillRect(new Rectangle(px, py, size, size), color);
+          bmpd.fillRect(new Rectangle(px, py+yoff, size, size), color);
         }
       }
       curx = maxx + 2*size;
