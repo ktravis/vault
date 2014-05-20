@@ -64,6 +64,28 @@ class Player2 extends KeyGroup {
 
 class Key extends KeyGroup {
   public var state: Array<Bool>;
+  //
+  var map: Map<String,Button>;
+  public function register_key(s:String, c:Int)
+  {
+      map[s] = new Button(function () { return state[c]; });
+  }
+  public function register_keys(s:String, codes:Array<Int>)
+  {
+      map[s] = new Button(function ()
+              { for (c in codes)
+                    if (state[c]) return true;
+                  return false; });
+  }
+  public function is_held(s:String):Bool
+  {
+      return map.exists(s) && map[s].value;
+  }
+  public function is_pressed(s:String):Bool
+  {
+      return map.exists(s) && map[s].just;
+  }
+  //
 
   var b2_: Button;
   var esc_: Button;
@@ -103,6 +125,9 @@ class Key extends KeyGroup {
 
   public function new() {
     state = Utils.initArray(256, false);
+    //
+    map = new Map<String, Button>();
+    //
 
     up_ = new Button(function() { return state[0x26] || state[0x57] || joyY < 0; });
     down_ = new Button(function() { return state[0x28] || state[0x53] || joyY > 0; });
@@ -161,6 +186,11 @@ class Key extends KeyGroup {
     pause_.update();
     p1.update();
     p2.update();
+
+    //
+    for (k in map.keys())
+        map[k].update();
+    //
   }
 
 }

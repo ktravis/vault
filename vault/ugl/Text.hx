@@ -129,8 +129,6 @@ class Text extends Entity {
         line_start = i;
       }
     longest_line = EMath.max(text.length - line_start, longest_line);
-    trace('lines: $lines and longest_line: $longest_line');
-    trace(text);
     var bmpd = new BitmapData(size*longest_line*FONTWIDTH, size*FONTHEIGHT*lines, true, 0);
 
     var curx = 0;
