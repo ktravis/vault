@@ -137,7 +137,7 @@ class Text extends Entity {
     for (i in 0...text.length) {
       if (text.charAt(i) == '\n') 
       {
-        yoff += FONTHEIGHT;
+        yoff += FONTHEIGHT*size;
         maxx = curx = 0;
         continue;
       }

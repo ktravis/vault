@@ -21,7 +21,7 @@ abstract Point(Point_) from Point_ to Point_ {
   @:op(A == B) static public function equals(lhs:Point, rhs:Point):Bool
   {
     return lhs.x == rhs.x && lhs.y == rhs.y;
-  }
+  } // != doesn't seem to work? make sure to use !(a == b)
 
   public function toString() 
   {

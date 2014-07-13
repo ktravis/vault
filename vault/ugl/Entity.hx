@@ -22,6 +22,7 @@ class Entity {
   static var layer = 10;
   public var pos: Vec2;
   public var angle: Float;
+  //public var scale: Float = 1;
   public var vel: Vec2;
   public var ticks: Float;
   var acc: Vec2;
@@ -346,6 +347,10 @@ class Entity {
     } else {
       m.translate(rotationcenter.x, rotationcenter.y);
     }
+    //if (scale != 1)
+      //{
+      //m.scale(scale,scale);
+      //}
     switch(alignment) {
       case TOPLEFT:
       case MIDDLE: m.translate(-sprite.width/2.0, -sprite.height/2.0);

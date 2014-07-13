@@ -78,11 +78,11 @@ class GraphicArt {
     return this;
   }  
 
-  public function text(x: Float, y: Float, text: String, color: UInt, ?centered: Bool = true, ?size: Int = 1): GraphicArt {
+  public function text(x: Float, y: Float, text: String, color: UInt, ?centered: Bool = true, ?size: Int = 1, ?complex:Bool = false): GraphicArt {
     if (disabled) return this;
     x += 0.5;
     y += 0.5;
-    var bmpd = Text.drawText(text, 0xFF000000 | color, size);
+    var bmpd = complex ? ComplexText.drawText(text, 0xFF000000 | color, size) : Text.drawText(text, 0xFF000000 | color, size);
     var m = new Matrix();
     m.translate((x - (centered ? bmpd.width/2 : 0)), (y - (centered ? bmpd.height/2 : 0)));
     sprite.graphics.beginBitmapFill(bmpd, m, false, false);

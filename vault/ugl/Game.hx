@@ -202,8 +202,11 @@ class Game {
     _delay = Math.max(t, _delay);
   }
 
-  static public function flash(color: UInt, ?t: Float = 0.01) {
-    new Flasher(color, t);
+  static public function flash(color: UInt, ?t: Float = 0.01, ?s: Bool = false, ?w: Int = null, ?h: Int = null) {
+    new Flasher(color, t, s, w, h);
+  }
+  static public function fade(color: UInt, ?t: Float = 0.01, ?callback:Void->Void) {
+    new Fader(color, t, callback);
   }
 
   public function new(title: String, version: String) {
@@ -269,8 +272,10 @@ class Game {
     Lib.current.stage.fullScreenSourceRect = new Rectangle(0, 0,
       width, height);
     #end
+    #if !android
     Lib.current.stage.scaleMode = StageScaleMode.SHOW_ALL;
     Lib.current.stage.align = StageAlign.TOP;
+    #end
 
     key = new Key();
     mouse = new Mouse();
@@ -387,7 +392,7 @@ class Game {
 
     switch (state) {
       case TITLE:
-        if (Game.key.any_pressed) {
+        if (Game.key.any_pressed || Game.mouse.button_pressed) {
           state = GAME;
           Game.clear();
           beginGame();
@@ -466,15 +471,42 @@ class Game {
 class Flasher extends Entity {
   static var layer = 99999;
   var duration = 0.0;
+  var solid:Bool = false;
   override public function begin() {
     duration = args[1];
+    solid = args[2] != null ? args[2] : false;
     alignment = TOPLEFT;
     pos.x = pos.y = 0;
-    gfx.fill(args[0]).rect(0, 0, Game.width, Game.height);
+    var w = args[3] != null ? args[3] : Game.width;
+    var h = args[4] != null ? args[4] : Game.height;
+    gfx.fill(args[0]).rect(0, 0, w, h);
   }
 
   override public function update() {
     if (ticks >= duration) remove();
+    else if (!solid) sprite.alpha = 1 - ticks/duration;
+  }
+}
+class Fader extends Entity {
+  static var layer = 99999;
+  var duration = 0.0;
+  var cb:Void->Void;
+  override public function begin() {
+    duration = args[1];
+    cb = args[2] != null ? args[2] : function () { return; };
+    alignment = TOPLEFT;
+    pos.x = pos.y = 0;
+    gfx.fill(args[0]).rect(0, 0, Game.width, Game.height);
+    sprite.alpha = 0;
+  }
+
+  override public function update() {
+    if (ticks >= duration)
+    {
+      cb();
+      remove();
+    }
+    else sprite.alpha = ticks/duration;
   }
 }
 

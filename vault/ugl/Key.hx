@@ -66,24 +66,60 @@ class Key extends KeyGroup {
   public var state: Array<Bool>;
   //
   var map: Map<String,Button>;
-  public function register_key(s:String, c:Int)
+  static var _lookup: Map<String,Int> = 
+    [
+      "a" => 65,
+      "b" => 66,
+      "c" => 67,
+      "d" => 68,
+      "e" => 69,
+      "f" => 70,
+      "g" => 71,
+      "h" => 72,
+      "i" => 73,
+      "j" => 74,
+      "k" => 75,
+      "l" => 76,
+      "m" => 77,
+      "n" => 78,
+      "o" => 79,
+      "p" => 80,
+      "q" => 81,
+      "r" => 82,
+      "s" => 83,
+      "t" => 84,
+      "u" => 85,
+      "v" => 86,
+      "w" => 87,
+      "x" => 88,
+      "y" => 89,
+      "z" => 90,
+    ];
+  public function register_key(s:String, ?c:Int)
   {
-      map[s] = new Button(function () { return state[c]; });
+    if (c == null)
+    {
+      if (_lookup.exists(s))
+        c = _lookup[s];
+      else
+        return;
+    }
+    map[s] = new Button(function () { return state[c]; });
   }
   public function register_keys(s:String, codes:Array<Int>)
   {
-      map[s] = new Button(function ()
-              { for (c in codes)
-                    if (state[c]) return true;
-                  return false; });
+    map[s] = new Button(function ()
+          { for (c in codes)
+              if (state[c]) return true;
+            return false; });
   }
   public function is_held(s:String):Bool
   {
-      return map.exists(s) && map[s].value;
+    return map.exists(s) && map[s].value;
   }
   public function is_pressed(s:String):Bool
   {
-      return map.exists(s) && map[s].just;
+    return map.exists(s) && map[s].just;
   }
   //
 

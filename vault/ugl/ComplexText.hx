@@ -24,46 +24,62 @@ class ComplexText extends Text {
     var cols:Array<Int> = [];
     var segs:Array<String> = [];
     for (s in text.split("@"))
-      if (s.length > 2)
+    {
+      if (s.length > 1 && s.substr(0,2) == '0x')
       {
-        if (s.substr(0,2) == '0x')
-        {
-            segs.push(s.substr(8));
-            cols.push(color | Std.parseInt(s.substr(0,8)));
-        }
-        else 
-        {
-            segs.push(s);
-            cols.push(color);
-        }
+        segs.push(s.substr(8));
+        cols.push(color | Std.parseInt(s.substr(0,8)));
       }
+      else 
+      {
+        segs.push(s);
+        cols.push(color);
+      }
+    }
     var lines = 1;
     var longest_line = 0;
+    var temp = 0;
     var line_start = 0;
+    text = segs.join('@');
     for (i in 0...text.length)
+    {
       if (text.charAt(i) == '\n')
       {
         lines++;
-        longest_line = EMath.max(i - line_start, longest_line);
+        longest_line = EMath.max(temp, longest_line);
         line_start = i;
+        temp = 0;
       }
+      else if (text.charAt(i) != '@')
+        temp++;
+    }
     longest_line = EMath.max(text.length - line_start, longest_line);
     var bmpd = new BitmapData(size*longest_line*Text.FONTWIDTH, size*Text.FONTHEIGHT*lines, true, 0);
 
     var curx = 0;
     var maxx = 0;
     var yoff = 0;
-    for (j in 0...segs.length)
+    var j = 0;
+    //for (j in 0...segs.length)
+    //{
+      //for (i in 0...segs[j].length)
+      //{
+        //if (segs[j].charAt(i) == '\n') 
+    for (i in 0...text.length)
     {
-      for (i in 0...segs[j].length)
-      {
-        if (segs[j].charAt(i) == '\n') 
+        if (text.charAt(i) == '@')
         {
-          yoff += Text.FONTHEIGHT;
+          j++;
+          continue;
+        }
+        if (text.charAt(i) == '\n')
+        {
+          yoff += Text.FONTHEIGHT*size;
           maxx = curx = 0;
           continue;
         }
-        var c = segs[j].charCodeAt(i);
+        //var c = segs[j].charCodeAt(i);
+        var c = text.charCodeAt(i);
         if (c <= 32 || c > 126) { c = 32; maxx += Text.FONTWIDTH*size; }
         for (p in 0...Text.FONTWIDTH*Text.FONTHEIGHT) {
           var v:UInt = Text.FONTDATA[(c-32)*2 + Std.int(p/32)] & 1 << (31-(p%32));
@@ -75,7 +91,7 @@ class ComplexText extends Text {
           }
         }
         curx = maxx + 2*size;
-      } 
+      //} 
     }
 
     var out = new BitmapData(bmpd.width, bmpd.height, true, 0);
